@@ -5,18 +5,27 @@ import { AUTHORS } from "../../utils/constants";
 import { Form } from "../Form";
 import { ChatList } from "../ChatList";
 
-const initialMessages = {
-  "chat-1": [
-    { text: "nnnn", author: "HUMAN", id: "mess-2" },
-    { text: "nnnn", author: "HUMAN", id: "mess-1" },
-  ],
-  "chat-2": [],
-};
-
 const initialChats = [
   { name: "chat1", id: "chat-1" },
   { name: "Chat 2", id: "chat-2" },
 ];
+
+const initialMessages = initialChats.reduce((acc, chat) => {
+  acc[chat.id] = [];
+
+  return acc
+}, {});
+
+console.log(initialMessages);
+
+// const initialMessages = {
+//   "chat-1": [
+//     { text: "nnnn", author: "HUMAN", id: "mess-2" },
+//     { text: "nnnn", author: "HUMAN", id: "mess-1" },
+//   ],
+//   "chat-2": [],
+// };
+
 
 function Chats(props) {
   console.log(props);

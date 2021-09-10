@@ -9,3 +9,11 @@
   background-color: rgba(34, 60, 80, 0.2);
   transform: scale(0.97);
 }
+
+.button-light {
+  background-color: antiquewhite;
+}
+
+.button-dark {
+  background-color: darkgrey;
+}
