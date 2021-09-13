@@ -1,8 +1,8 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeContext } from "../../utils/ThemeContext";
 import { store } from "../../store";
-import { toggleShowName } from "../../store/profile/actions";
+import { toggleShowName, changeName } from "../../store/profile/actions";
 
 const withContext = (Component) => {
   return (props) => {
@@ -13,19 +13,37 @@ const withContext = (Component) => {
 };
 
 export const Profile = ({ theme }) => {
+  const [value, setValue] = useState("");
+
   const showName = useSelector((state) => state.showName);
+  const name = useSelector((state) => state.name);
   const dispatch = useDispatch();
 
   const handleClick = () => {
     dispatch(toggleShowName);
   };
-  
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(changeName(value));
+    setValue('');
+  };
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
+  };
+
   return (
     <>
-      <button onClick={theme.changeTheme}>Toggle theme</button>
+      {/* <button onClick={theme.changeTheme}>Toggle theme</button> */}
       <button onClick={handleClick}>Toggle show name</button>
 
-      {showName && <div>Show name is true</div>}
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={value} onChange={handleChange} />
+        <button type="submit">Submit</button>
+      </form>
+
+      {showName && <div>{name}</div>}
 
       <h3 style={{ color: theme.theme === "light" ? "red" : "black" }}>
         This is profile page

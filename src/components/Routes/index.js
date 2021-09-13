@@ -7,8 +7,14 @@ import { Profile, ThemedProfile } from "../Profile";
 export const Routes = () => {
   return (
     <BrowserRouter>
-      <Link to="/chats">CHATS</Link>
-      <Link to="/profile">Profile</Link>
+      <ul>
+        <li>
+          <Link to="/chats">CHATS</Link>
+        </li>
+        <li>
+          <Link to="/profile">Profile</Link>
+        </li>
+      </ul>
       <Switch>
         <Route path="/" exact>
           <Home />

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import { TextField } from "@material-ui/core";
-import { Button } from "../Button";
+import { TextField, Button } from "@material-ui/core";
 
 export const Form = ({ onSubmit }) => {
   const inputRef = useRef(null);
@@ -30,13 +29,8 @@ export const Form = ({ onSubmit }) => {
         onChange={handleChange}
         inputRef={inputRef}
       />
-      <Button>
-        {(text) => (
-        <>
-          <span>RENDER PROP</span>
-          <span>{text}</span>
-        </>
-        )}
+      <Button variant="outlined" type="submit">
+        Send
       </Button>
     </form>
   );

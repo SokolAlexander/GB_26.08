@@ -1,9 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
-import { useParams, useRouteMatch, useHistory, useLocation } from "react-router-dom";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  useParams,
+  useRouteMatch,
+  useHistory,
+  useLocation,
+  Redirect,
+} from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+
 import { Message } from "../Message";
 import { AUTHORS } from "../../utils/constants";
 import { Form } from "../Form";
 import { ChatList } from "../ChatList";
+import { addChat, deleteChat } from "../../store/chats/actions";
+import { addMessage } from "../../store/messages/actions";
+import { selectIfChatExists } from "../../store/chats/selectors";
 
 const initialChats = [
   { name: "chat1", id: "chat-1" },
@@ -13,7 +24,7 @@ const initialChats = [
 const initialMessages = initialChats.reduce((acc, chat) => {
   acc[chat.id] = [];
 
-  return acc
+  return acc;
 }, {});
 
 console.log(initialMessages);
@@ -26,23 +37,21 @@ console.log(initialMessages);
 //   "chat-2": [],
 // };
 
-
 function Chats(props) {
-  console.log(props);
   const { chatId } = useParams();
-  const location = useLocation();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-  console.log(location);
+  const messages = useSelector((state) => state.messages.messages);
+  const chats = useSelector((state) => state.chats.chats);
 
-  const [messages, setMessages] = useState(initialMessages);
-  const [chats, setChats] = useState(initialChats);
+  const selectChatExists = useMemo(() => selectIfChatExists(chatId), [chatId]);
+
+  const chatExists = useSelector(selectChatExists);
 
   const sendMessage = useCallback(
-    (message) => {
-      setMessages((prevMess) => ({
-        ...prevMess,
-        [chatId]: [...prevMess[chatId], message],
-      }));
+    (text, author) => {
+      dispatch(addMessage(chatId, text, author));
     },
     [chatId]
   );
@@ -53,11 +62,7 @@ function Chats(props) {
 
     if (!!chatId && curMess?.[curMess.length - 1]?.author === AUTHORS.HUMAN) {
       timeout = setTimeout(() => {
-        sendMessage({
-          text: "I am bot",
-          author: AUTHORS.bot,
-          id: `mess-${Date.now()}`,
-        });
+        sendMessage("I am bot", AUTHORS.bot);
       }, 3000);
     }
 
@@ -66,21 +71,45 @@ function Chats(props) {
 
   const handleAddMessage = useCallback(
     (text) => {
-      sendMessage({
-        text,
-        author: AUTHORS.HUMAN,
-        id: `mess-${Date.now()}`,
-      });
+      sendMessage(text, AUTHORS.HUMAN);
     },
-    [chatId, sendMessage]
+    [sendMessage]
+  );
+
+  const handleAddChat = useCallback(
+    (name) => {
+      dispatch(addChat(name));
+    },
+    [dispatch]
+  );
+
+  const handleDeleteChat = useCallback(
+    (id) => {
+      dispatch(deleteChat(id));
+
+      if (chatId !== id) {
+        return;
+      }
+
+      if (chats.length === 1) {
+        history.push(`/chats/${chats[0].id}`);
+      } else {
+        history.push(`/chats`);
+      }
+    },
+    [chatId, dispatch, chats, history]
   );
 
   return (
     <div className="App">
-      <ChatList chats={chats} onAddChat />
-      {!!chatId && (
+      <ChatList
+        chats={chats}
+        onAddChat={handleAddChat}
+        onDeleteChat={handleDeleteChat}
+      />
+      {!!chatId && chatExists && (
         <>
-          {messages[chatId].map((message) => (
+          {(messages[chatId] || []).map((message) => (
             <Message key={message.id} text={message.text} id={message.id} />
           ))}
           <Form onSubmit={handleAddMessage} />
