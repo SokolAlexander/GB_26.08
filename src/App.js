@@ -3,7 +3,8 @@ import { Provider } from "react-redux";
 import { Routes } from "./components/Routes";
 import "./App.scss";
 import { ThemeContext } from "./utils/ThemeContext";
-import { store } from "./store";
+import { store, persistor } from "./store";
+import { PersistGate } from "redux-persist/integration/react";
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -14,9 +15,11 @@ function App() {
 
   return (
     <Provider store={store}>
-      <ThemeContext.Provider value={{ theme, changeTheme }}>
-        <Routes />
-      </ThemeContext.Provider>
+      <PersistGate persistor={persistor}>
+        <ThemeContext.Provider value={{ theme, changeTheme }}>
+          <Routes />
+        </ThemeContext.Provider>
+      </PersistGate>
     </Provider>
   );
 }
