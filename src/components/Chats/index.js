@@ -62,37 +62,9 @@ function Chats(props) {
     [sendMessage]
   );
 
-  const handleAddChat = useCallback(
-    (name) => {
-      dispatch(addChat(name));
-    },
-    [dispatch]
-  );
-
-  const handleDeleteChat = useCallback(
-    (id) => {
-      dispatch(deleteChat(id));
-
-      if (chatId !== id) {
-        return;
-      }
-
-      if (chats.length === 1) {
-        history.push(`/chats/${chats[0].id}`);
-      } else {
-        history.push(`/chats`);
-      }
-    },
-    [chatId, dispatch, chats, history]
-  );
-
   return (
     <div className="App">
-      <ChatList
-        chats={chats}
-        onAddChat={handleAddChat}
-        onDeleteChat={handleDeleteChat}
-      />
+      <ChatList />
       {!!chatId && chatExists && (
         <>
           {(messages[chatId] || []).map((message) => (

@@ -1,12 +1,12 @@
 import React from "react";
-import { Link, useParams, useHistory } from "react-router-dom";
-import { ListItem } from "@material-ui/core";
+import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteChat } from "../../store/chats/actions";
 import {
   selectChatsLength,
   selectFirstChatId,
 } from "../../store/chats/selectors";
+import { ChatItemView } from "./ChatItemVIew";
 
 export const ChatItem = ({ chat }) => {
   const { chatId } = useParams();
@@ -17,11 +17,11 @@ export const ChatItem = ({ chat }) => {
 
   const handleDelete = () => {
     dispatch(deleteChat(chat.id));
-
+    
     if (chatId !== chat.id) {
       return;
     }
-
+    
     if (chatsLength === 1) {
       history.push(`/chats/${firstChatId}`);
     } else {
@@ -29,10 +29,5 @@ export const ChatItem = ({ chat }) => {
     }
   };
 
-  return (
-    <ListItem>
-      <Link to={`/chats/${chat.id}`}>{chat.name}</Link>
-      <span onClick={handleDelete}>delete</span>
-    </ListItem>
-  );
+  return <ChatItemView name={chat.name} id={chat.id} onDelete={handleDelete} />;
 };

@@ -12,7 +12,7 @@ const withContext = (Component) => {
   };
 };
 
-export const Profile = ({ theme }) => {
+export const Profile = ({ theme, onLogout }) => {
   const [value, setValue] = useState("");
 
   const showName = useSelector((state) => state.showName);
@@ -20,13 +20,13 @@ export const Profile = ({ theme }) => {
   const dispatch = useDispatch();
 
   const handleClick = () => {
-    dispatch(toggleShowName);
+    onLogout();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(changeName(value));
-    setValue('');
+    setValue("");
   };
 
   const handleChange = (e) => {
@@ -35,8 +35,7 @@ export const Profile = ({ theme }) => {
 
   return (
     <>
-      {/* <button onClick={theme.changeTheme}>Toggle theme</button> */}
-      <button onClick={handleClick}>Toggle show name</button>
+      <button onClick={handleClick}>Logout</button>
 
       <form onSubmit={handleSubmit}>
         <input type="text" value={value} onChange={handleChange} />

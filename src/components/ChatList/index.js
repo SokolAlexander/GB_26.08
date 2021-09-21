@@ -2,19 +2,24 @@ import React, { useState } from "react";
 import { List, Button } from "@material-ui/core";
 
 import { ChatItem } from "../ChatItem";
+import { useSelector, useDispatch } from "react-redux";
+import { selectChats } from "../../store/chats/selectors";
+import { addChat } from "../../store/chats/actions";
 
-export const ChatList = ({ chats, onDeleteChat, onAddChat }) => {
+export const ChatList = ({ onDeleteChat, onAddChat }) => {
+  const chats = useSelector(selectChats);
+  const dispatch = useDispatch();
   const [value, setValue] = useState("");
 
   const handleChange = (e) => {
     setValue(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleAddChat = (e) => {
     e.preventDefault();
-
-    onAddChat(value);
     setValue("");
+
+    dispatch(addChat(value));
   };
 
   return (
@@ -27,7 +32,7 @@ export const ChatList = ({ chats, onDeleteChat, onAddChat }) => {
           onDelete={onDeleteChat}
         />
       ))}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleAddChat}>
         <input type="text" value={value} onChange={handleChange} />
         <Button variant="outlined" type="submit" disabled={!value}>
           Add chat
