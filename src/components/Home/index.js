@@ -14,8 +14,10 @@ export const Home = ({ onLogin, onSignUp }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     setLogin("");
     setPass("");
+
     if (!!onLogin) {
       onLogin(login, pass);
     } else {

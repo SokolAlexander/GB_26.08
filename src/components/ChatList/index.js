@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { List, Button } from "@material-ui/core";
 
 import { ChatItem } from "../ChatItem";
 import { useSelector, useDispatch } from "react-redux";
 import { selectChats } from "../../store/chats/selectors";
-import { addChat } from "../../store/chats/actions";
+import { addChat, addChatFb } from "../../store/chats/actions";
+import { ref, onValue, set } from "firebase/database";
+import { db } from "../../services/firebase";
 
 export const ChatList = ({ onDeleteChat, onAddChat }) => {
   const chats = useSelector(selectChats);
+  // const [chats, setChats] = useState([]);
   const dispatch = useDispatch();
   const [value, setValue] = useState("");
 
@@ -17,9 +20,11 @@ export const ChatList = ({ onDeleteChat, onAddChat }) => {
 
   const handleAddChat = (e) => {
     e.preventDefault();
-    setValue("");
 
-    dispatch(addChat(value));
+    dispatch(addChatFb(value))
+
+    setValue("");
+    // dispatch(addChat(value));
   };
 
   return (

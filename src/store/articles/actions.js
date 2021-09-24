@@ -14,7 +14,7 @@ const getArticlesSuccess = (articles) => ({
 });
 
 const getArticlesFailure = (error) => ({
-  type: GET_ARTICLES_SUCCESS,
+  type: GET_ARTICLES_FAILURE,
   payload: error,
 });
 

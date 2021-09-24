@@ -1,8 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { ref, set, onValue } from "firebase/database";
+
 import { ThemeContext } from "../../utils/ThemeContext";
 import { store } from "../../store";
 import { toggleShowName, changeName } from "../../store/profile/actions";
+import { db } from "../../services/firebase";
 
 const withContext = (Component) => {
   return (props) => {
@@ -12,21 +15,35 @@ const withContext = (Component) => {
   };
 };
 
+
 export const Profile = ({ theme, onLogout }) => {
   const [value, setValue] = useState("");
+  const [name, setName] = useState("");
 
   const showName = useSelector((state) => state.showName);
-  const name = useSelector((state) => state.name);
+  // const name = useSelector((state) => state.name);
   const dispatch = useDispatch();
 
   const handleClick = () => {
     onLogout();
   };
 
+  useEffect(() => {
+    const userDbRef = ref(db, "user");
+    onValue(userDbRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log('--------', data);
+      setName(data?.username || '');
+    });
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(changeName(value));
     setValue("");
+    set(ref(db, "user"), {
+      username: value,
+    });
+
   };
 
   const handleChange = (e) => {
@@ -42,7 +59,7 @@ export const Profile = ({ theme, onLogout }) => {
         <button type="submit">Submit</button>
       </form>
 
-      {showName && <div>{name}</div>}
+      <div>{name}</div>
 
       <h3 style={{ color: theme.theme === "light" ? "red" : "black" }}>
         This is profile page

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   useParams,
   useRouteMatch,
@@ -12,9 +12,11 @@ import { Message } from "../Message";
 import { AUTHORS } from "../../utils/constants";
 import { Form } from "../Form";
 import { ChatList } from "../ChatList";
-import { addChat, deleteChat } from "../../store/chats/actions";
-import { addMessageWithReply } from "../../store/messages/actions";
+import { addChat, deleteChat, initChats } from "../../store/chats/actions";
+import { addMessageWithReply, addMessageFb, initMessages } from "../../store/messages/actions";
 import { selectIfChatExists } from "../../store/chats/selectors";
+import { onValue, ref, set } from "firebase/database";
+import { db } from "../../services/firebase";
 
 const initialChats = [
   { name: "chat1", id: "chat-1" },
@@ -37,20 +39,28 @@ console.log(initialMessages);
 //   "chat-2": [],
 // };
 
-function Chats(props) {
+function Chats() {
   const { chatId } = useParams();
-  const history = useHistory();
   const dispatch = useDispatch();
 
+  // const [chats, setChats] = useState([]);
+  // const [messages, setMessages] = useState([]);
+
+  // const unsubscribeMessages = useRef(null);
+
+  useEffect(() => {
+    dispatch(initChats());
+    dispatch(initMessages());
+  }, []);
+
   const messages = useSelector((state) => state.messages.messages);
-  const chats = useSelector((state) => state.chats.chats);
 
   const selectChatExists = useMemo(() => selectIfChatExists(chatId), [chatId]);
   const chatExists = useSelector(selectChatExists);
 
   const sendMessage = useCallback(
     (text, author) => {
-      dispatch(addMessageWithReply(chatId, text, author));
+      dispatch(addMessageFb(text, author, chatId));
     },
     [chatId]
   );
@@ -67,7 +77,7 @@ function Chats(props) {
       <ChatList />
       {!!chatId && chatExists && (
         <>
-          {(messages[chatId] || []).map((message) => (
+          {(Object.values(messages[chatId] || {}) || []).map((message) => (
             <Message key={message.id} text={message.text} id={message.id} />
           ))}
           <Form onSubmit={handleAddMessage} />
