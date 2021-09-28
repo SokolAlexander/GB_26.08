@@ -6,9 +6,11 @@ export const SimpleText = ({ name, age, someObj }) => {
     alert('HELLO');
   }
 
+  console.log('render simpletext');
+
   return (
     <section>
-      <h3>HELLO REACT, {name}</h3>
+      <h3>HELLO, {name}</h3>
       <Message question={line} onClick={sayHello} />
     </section>
   );

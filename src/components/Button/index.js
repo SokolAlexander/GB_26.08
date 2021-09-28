@@ -4,16 +4,15 @@ import AccessAlarmIcon from "@material-ui/icons/AccessAlarm";
 import "./styles.css";
 import { ThemeContext } from "../../utils/ThemeContext";
 
-export const Button = ({ children }) => {
-  const contextValue = useContext(ThemeContext);
+export const Button = ({ children, onClick }) => {
+  console.log('render button');
   return (
     <div
-      className={`my-button ${
-        contextValue.theme === "light" ? "button-light" : "button-dark"
-      }`}
+      className='my-button'
       role="button"
+      onClick={onClick}
     >
-      {children("text from child")}
+      {children}
     </div>
   );
 };
